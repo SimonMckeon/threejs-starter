@@ -2,12 +2,12 @@
 import { createCamera } from './components/camera'
 import { createScene } from './components/scene'
 import { createCube } from './components/cube'
+import { createLights } from './components/lights'
+import { createStats } from './components/stats'
 
 import Loop from './systems/Loop'
 import Resizer from './systems/Resizer'
 import { createRenderer } from './systems/renderer'
-import { createLights } from './components/lights'
-
 
 let _camera,
     _scene,
@@ -24,13 +24,17 @@ class App {
 
     container.append(_renderer.domElement)
 
+    const fpsStats = createStats(container, 0)
+    const msStats = createStats(container, 1, 'position: absolute; top: 0; left: 80px')
+    const memoryStats = createStats(container, 2, 'position: absolute; top: 0; left: 160px')
+
     // Demo content
     const cube = createCube()
-    const lights = createLights()
+    const { ambientLight, directLight } = createLights()
 
-    _loop.updatables.push(cube)
+    _loop.updatables.push(fpsStats, msStats, memoryStats, cube)
 
-    _scene.add(cube, lights)
+    _scene.add(ambientLight, directLight, cube)
 
     new Resizer(container, _camera, _renderer)
   }
